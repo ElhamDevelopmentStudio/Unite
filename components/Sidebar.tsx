@@ -22,7 +22,7 @@ const Sidebar = () => {
               key={link.label}
               className={cn(
                 `flex gap-4 items-center p-4 rouded-lg justify-start`,
-                { "bg-blue-1": isActive }
+                isActive ? "bg-indigo-600" : "hover:bg-gray-700"
               )}
             >
               <Image src={link.imgUrl} alt="logo" width={24} height={24} />
