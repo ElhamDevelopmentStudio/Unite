@@ -1,3 +1,4 @@
+import StreamVideoProvider from "@/providers/StreamClientProvider";
 import React from "react";
 
 type Props = {
@@ -5,7 +6,7 @@ type Props = {
 };
 
 const RootLayout = ({ children }: Props) => {
-  return <main>{children}</main>;
+  return <StreamVideoProvider>{children}</StreamVideoProvider>;
 };
 
 export default RootLayout;
