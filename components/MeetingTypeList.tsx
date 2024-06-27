@@ -7,13 +7,17 @@ import MeetingModal from "./MeetingModal";
 import { useUser } from "@clerk/nextjs";
 import { Call, useStreamVideoClient } from "@stream-io/video-react-sdk";
 import { useToast } from "@/components/ui/use-toast";
+import { StreamChat } from "stream-chat";
+import { tokenProvider } from "@/Actions/stream.actions";
+
+const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY;
 
 const MeetingTypeList = () => {
   const [meetingState, setMeetingState] = useState<
     "isScheduleMeeting" | "isJoiningMeeting" | "isInstantMeeting" | undefined
   >(undefined);
   const router = useRouter();
-  const user = useUser();
+  const { user } = useUser();
   const client = useStreamVideoClient();
   const [values, setValues] = useState({
     dateTime: new Date(),
@@ -36,7 +40,7 @@ const MeetingTypeList = () => {
       const id = crypto.randomUUID();
 
       const call = client.call("default", id);
-      if (!call) throw new Error("Faild to create call.");
+      if (!call) throw new Error("Failed to create call.");
 
       const startsAt =
         values.dateTime.toISOString() || new Date(Date.now()).toISOString();
@@ -51,6 +55,25 @@ const MeetingTypeList = () => {
           },
         },
       });
+
+      // Create a chat channel with the same ID as the call
+      const chatClient = StreamChat.getInstance(apiKey!);
+      const token = await tokenProvider();
+      await chatClient.connectUser(
+        {
+          id: user?.id,
+          name: user.username || user.id,
+          image: user.imageUrl,
+        },
+        token
+      );
+
+      const channel = chatClient.channel("messaging", id, {
+        name: `Meeting Chat: ${id}`,
+        members: [user.id],
+      });
+
+      await channel.watch();
 
       setCallDetails(call);
 

@@ -42,6 +42,14 @@
   height: 40px;
 }
 
+.cl-navbarButton {
+  color: #fff
+}
+
+.cl-userButtonPopoverActionButton:hover, .cl-navbarButton:hover {
+  color: #808080;
+}
+
 .glassmorphism {
   background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(4px);
