@@ -10,7 +10,7 @@ import {
   useCallStateHooks,
 } from "@stream-io/video-react-sdk";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Users, LayoutList } from "lucide-react";
+import { Users, LayoutList, MessageCircle } from "lucide-react"; // Import MessageCircle
 
 import {
   DropdownMenu,
@@ -21,19 +21,20 @@ import {
 } from "./ui/dropdown-menu";
 import Loader from "./Loader";
 import EndCallButton from "./EndCallButton";
+import ChatPortal from "./ChatPortal";
 import { cn } from "@/lib/utils";
 
 type CallLayoutType = "grid" | "speaker-left" | "speaker-right";
 
-const MeetingRoom = () => {
+const MeetingRoom = ({ callId }: { callId: string }) => {
   const searchParams = useSearchParams();
   const isPersonalRoom = !!searchParams.get("personal");
   const router = useRouter();
   const [layout, setLayout] = useState<CallLayoutType>("speaker-left");
   const [showParticipants, setShowParticipants] = useState(false);
   const { useCallCallingState } = useCallStateHooks();
+  const [messagePortal, setMessagePortal] = useState(false);
 
-  // for more detail about types of CallingState see: https://getstream.io/video/docs/react/ui-cookbook/ringing-call/#incoming-call-panel
   const callingState = useCallCallingState();
 
   if (callingState !== CallingState.JOINED) return <Loader />;
@@ -51,8 +52,18 @@ const MeetingRoom = () => {
 
   return (
     <section className="relative h-screen w-full overflow-hidden pt-4 text-white">
+      {/* Chat button at the top right corner */}
+      <div className="absolute top-4 right-4">
+        <button
+          className="flex items-center justify-center w-12 h-12 bg-[#19232d] rounded-full hover:bg-[#4c535b]"
+          onClick={() => setMessagePortal(!messagePortal)}
+        >
+          <MessageCircle size={24} className="text-white" />
+        </button>
+      </div>
+
       <div className="relative flex size-full items-center justify-center">
-        <div className=" flex size-full max-w-[1000px] items-center">
+        <div className="flex size-full max-w-[1000px] items-center">
           <CallLayout />
         </div>
         <div
@@ -63,13 +74,12 @@ const MeetingRoom = () => {
           <CallParticipantsList onClose={() => setShowParticipants(false)} />
         </div>
       </div>
-      video layout and call controls
       <div className="fixed bottom-0 flex w-full items-center justify-center gap-5">
         <CallControls onLeave={() => router.push(`/`)} />
 
         <DropdownMenu>
           <div className="flex items-center">
-            <DropdownMenuTrigger className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]  ">
+            <DropdownMenuTrigger className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
               <LayoutList size={20} className="text-white" />
             </DropdownMenuTrigger>
           </div>
@@ -90,12 +100,17 @@ const MeetingRoom = () => {
         </DropdownMenu>
         <CallStatsButton />
         <button onClick={() => setShowParticipants((prev) => !prev)}>
-          <div className=" cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]  ">
+          <div className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
             <Users size={20} className="text-white" />
           </div>
         </button>
         {!isPersonalRoom && <EndCallButton />}
       </div>
+      {/* {messagePortal && ( */}
+      <div className="absolute bottom-0 right-0 w-full md:w-1/3 h-3/4 bg-gray-800 z-10000">
+        <ChatPortal channelId={callId} />
+      </div>
+      {/* )} */}
     </section>
   );
 };

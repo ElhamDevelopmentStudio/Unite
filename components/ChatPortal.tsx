@@ -10,53 +10,85 @@ import {
   MessageInput,
   ChannelList,
 } from "stream-chat-react";
-import { StreamChat } from "stream-chat";
+import { StreamChat, Channel as StreamChannel } from "stream-chat";
 import { useUser } from "@clerk/nextjs";
 import { tokenProvider } from "@/Actions/stream.actions";
 import Loader from "./Loader";
+import { EmojiPicker } from "stream-chat-react/emojis";
 import "stream-chat-react/dist/css/v2/index.css";
 
-const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY;
+const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY as string;
 
-const ChatPortal = ({ channelId }: { channelId: string }) => {
+const ChatPortal: React.FC<{ channelId: string }> = ({ channelId }) => {
   const { user, isLoaded } = useUser();
-  const [client, setClient] = useState(null);
-  const [channel, setChannel] = useState(null);
-
-  const chatUser = {
-    id: user?.id || "user ID",
-    name: user?.username || user?.id,
-    image: user?.imageUrl,
-  };
+  const [client, setClient] = useState<StreamChat | null>(null);
+  const [channel, setChannel] = useState<StreamChannel | null>(null);
 
   useEffect(() => {
-    if (!isLoaded || !user || !channelId) return;
-    if (!apiKey) throw new Error("Stream api key missing");
-    if (!chatUser.id) throw new Error("chat ID is missing");
+    if (!isLoaded || !user) return;
 
-    const chatClientProvider = async () => {
+    const initChat = async () => {
       const chatClient = StreamChat.getInstance(apiKey);
 
-      await chatClient.connectUser(chatUser, tokenProvider);
+      await chatClient.connectUser(
+        {
+          id: user?.id,
+          name: user?.fullName || "User Name",
+        },
+        tokenProvider
+      );
 
-      const channel = chatClient.channel("messaging", channelId, {
-        members: [chatUser.id],
+      const chatChannel = chatClient.channel("messaging", channelId, {
+        name: "General",
       });
 
-      await channel.watch();
+      await chatChannel.watch();
 
-      setChannel(channel);
       setClient(chatClient);
+      setChannel(chatChannel);
     };
 
-    chatClientProvider(); //eslint-disable-next-line
-  }, [user, isLoaded, channelId]);
+    initChat();
 
-  if (!channel || !client) return <Loader />;
+    return () => {
+      if (client) {
+        client.disconnectUser();
+      }
+    };
+  }, [isLoaded, user, channelId]);
+
+  const updateChannelType = async () => {
+    const response = await fetch("/api/updateChannelType", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        channelType: "messaging",
+        grants: {
+          channel_member: [
+            "read-channel",
+            "create-message",
+            "update-message-owner",
+            "delete-message-owner",
+          ],
+        },
+      }),
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      console.log("Channel type updated successfully", data);
+    } else {
+      console.error("Failed to update channel type", data.error);
+    }
+  };
+
+  if (!client || !channel) return <Loader />;
 
   return (
     <Chat client={client} theme="messaging light">
-      <Channel channel={channel}>
+      <Channel channel={channel} EmojiPicker={EmojiPicker}>
         <Window>
           <ChannelHeader />
           <MessageList />
@@ -64,6 +96,7 @@ const ChatPortal = ({ channelId }: { channelId: string }) => {
         </Window>
         <Thread />
       </Channel>
+      <button onClick={updateChannelType}>Update Channel Type</button>
     </Chat>
   );
 };

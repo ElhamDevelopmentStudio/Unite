@@ -8,7 +8,6 @@ import {
 } from "@stream-io/video-react-sdk";
 import Alert from "./Alert";
 import { Button } from "./ui/button";
-import ChatPortal from "./ChatPortal"; // Make sure to import ChatPortal
 
 const MeetingSetup = ({
   setIsSetupComplete,
@@ -82,10 +81,6 @@ const MeetingSetup = ({
       >
         Join meeting
       </Button>
-
-      <div className="w-full h-full flex flex-col items-center justify-center">
-        <ChatPortal channelId={call.id} />
-      </div>
     </div>
   );
 };
