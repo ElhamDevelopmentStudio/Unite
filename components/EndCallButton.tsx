@@ -4,10 +4,12 @@ import { useCall, useCallStateHooks } from "@stream-io/video-react-sdk";
 
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
+import { useToast } from "./ui/use-toast";
 
 const EndCallButton = () => {
   const call = useCall();
   const router = useRouter();
+  const { toast } = useToast();
 
   if (!call)
     throw new Error(
@@ -27,6 +29,11 @@ const EndCallButton = () => {
   const endCall = async () => {
     await call.endCall();
     router.push("/");
+    toast({
+      variant: "destructive",
+      title: "Meeting Terminated.",
+      description: "You ended the meeting",
+    });
   };
 
   return (

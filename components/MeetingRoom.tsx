@@ -10,7 +10,7 @@ import {
   useCallStateHooks,
 } from "@stream-io/video-react-sdk";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Users, LayoutList, MessageCircle } from "lucide-react"; // Import MessageCircle
+import { Users, LayoutList, MessageCircle } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -32,8 +32,8 @@ const MeetingRoom = ({ callId }: { callId: string }) => {
   const router = useRouter();
   const [layout, setLayout] = useState<CallLayoutType>("speaker-left");
   const [showParticipants, setShowParticipants] = useState(false);
+  const [showChatPortal, setShowChatPortal] = useState(false);
   const { useCallCallingState } = useCallStateHooks();
-  const [messagePortal, setMessagePortal] = useState(false);
 
   const callingState = useCallCallingState();
 
@@ -52,29 +52,28 @@ const MeetingRoom = ({ callId }: { callId: string }) => {
 
   return (
     <section className="relative h-screen w-full overflow-hidden pt-4 text-white">
-      {/* Chat button at the top right corner */}
-      <div className="absolute top-4 right-4">
+      <div className="absolute top-4 right-4 z-50">
         <button
           className="flex items-center justify-center w-12 h-12 bg-[#19232d] rounded-full hover:bg-[#4c535b]"
-          onClick={() => setMessagePortal(!messagePortal)}
+          onClick={() => setShowChatPortal((prev) => !prev)}
         >
           <MessageCircle size={24} className="text-white" />
         </button>
       </div>
 
-      <div className="relative flex size-full items-center justify-center">
-        <div className="flex size-full max-w-[1000px] items-center">
+      <div className="relative flex h-full w-full items-center justify-center">
+        <div className="flex h-full w-full max-w-[1000px] items-center">
           <CallLayout />
         </div>
         <div
           className={cn("h-[calc(100vh-86px)] hidden ml-2", {
-            "show-block": showParticipants,
+            block: showParticipants,
           })}
         >
           <CallParticipantsList onClose={() => setShowParticipants(false)} />
         </div>
       </div>
-      <div className="fixed bottom-0 flex w-full items-center justify-center gap-5">
+      <div className="fixed bottom-0 flex w-full items-center justify-center gap-5 z-40">
         <CallControls onLeave={() => router.push(`/`)} />
 
         <DropdownMenu>
@@ -106,11 +105,14 @@ const MeetingRoom = ({ callId }: { callId: string }) => {
         </button>
         {!isPersonalRoom && <EndCallButton />}
       </div>
-      {/* {messagePortal && ( */}
-      <div className="absolute bottom-0 right-0 w-full md:w-1/3 h-3/4 bg-gray-800 z-10000">
-        <ChatPortal channelId={callId} />
-      </div>
-      {/* )} */}
+      {showChatPortal && (
+        <div className="absolute bottom-0 right-0 w-full md:w-1/3 h-3/4 bg-gray-800 z-50">
+          <ChatPortal
+            channelId={callId}
+            onClose={() => setShowChatPortal(false)}
+          />{" "}
+        </div>
+      )}
     </section>
   );
 };

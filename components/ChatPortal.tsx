@@ -15,11 +15,15 @@ import { useUser } from "@clerk/nextjs";
 import { tokenProvider } from "@/Actions/stream.actions";
 import Loader from "./Loader";
 import { EmojiPicker } from "stream-chat-react/emojis";
+import { X } from "lucide-react";
 import "stream-chat-react/dist/css/v2/index.css";
 
 const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY as string;
 
-const ChatPortal: React.FC<{ channelId: string }> = ({ channelId }) => {
+const ChatPortal: React.FC<{ channelId: string; onClose: () => void }> = ({
+  channelId,
+  onClose,
+}) => {
   const { user, isLoaded } = useUser();
   const [client, setClient] = useState<StreamChat | null>(null);
   const [channel, setChannel] = useState<StreamChannel | null>(null);
@@ -38,7 +42,7 @@ const ChatPortal: React.FC<{ channelId: string }> = ({ channelId }) => {
         tokenProvider
       );
 
-      const chatChannel = chatClient.channel("messaging", channelId, {
+      const chatChannel = chatClient.channel("livestream", channelId, {
         name: "General",
       });
 
@@ -64,7 +68,7 @@ const ChatPortal: React.FC<{ channelId: string }> = ({ channelId }) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        channelType: "messaging",
+        channelType: "livestream",
         grants: {
           channel_member: [
             "read-channel",
@@ -87,17 +91,25 @@ const ChatPortal: React.FC<{ channelId: string }> = ({ channelId }) => {
   if (!client || !channel) return <Loader />;
 
   return (
-    <Chat client={client} theme="messaging light">
-      <Channel channel={channel} EmojiPicker={EmojiPicker}>
-        <Window>
-          <ChannelHeader />
-          <MessageList />
-          <MessageInput />
-        </Window>
-        <Thread />
-      </Channel>
-      <button onClick={updateChannelType}>Update Channel Type</button>
-    </Chat>
+    <div className="relative h-full w-full">
+      <Chat client={client} theme="messaging light">
+        <Channel channel={channel} EmojiPicker={EmojiPicker}>
+          <Window>
+            <ChannelHeader />
+            <MessageList />
+            <MessageInput />
+          </Window>
+          <Thread />
+        </Channel>
+        <button onClick={updateChannelType}>Update Channel Type</button>
+      </Chat>
+      <button
+        className="absolute top-2 right-2 p-2 rounded-full bg-white hover:bg-gray-100 text-gray-700"
+        onClick={onClose}
+      >
+        <X size={20} />
+      </button>
+    </div>
   );
 };
 
