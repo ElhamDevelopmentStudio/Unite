@@ -110,7 +110,7 @@ const MeetingRoom = ({ callId }: { callId: string }) => {
           <ChatPortal
             channelId={callId}
             onClose={() => setShowChatPortal(false)}
-          />{" "}
+          />
         </div>
       )}
     </section>

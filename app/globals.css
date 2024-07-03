@@ -122,3 +122,9 @@
     width: 100%;
   }
 }
+
+/*Stream Video Controls*/
+
+.str-video__icon--caret-up {
+  color: #f44c43;
+}
