@@ -59,7 +59,7 @@ const ChatPortal: React.FC<{ channelId: string; onClose: () => void }> = ({
         client.disconnectUser();
       }
     };
-  }, [isLoaded, user, channelId]);
+  }, [isLoaded, user, channelId, client]);
 
   const updateChannelType = async () => {
     const response = await fetch("/api/updateChannelType", {

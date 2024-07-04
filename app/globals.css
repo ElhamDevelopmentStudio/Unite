@@ -90,6 +90,11 @@
   color: white;
 }
 
+.cl-avatarImageActionsUpload {
+  border-color: white;
+  color: white;
+}
+
 /* =============================== */
 
 @layer utilities {
