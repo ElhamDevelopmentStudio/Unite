@@ -13,12 +13,7 @@ export const metadata: Metadata = {
   description:
     "A video gathering app for creating meetings, conferances and keeping in touch.",
   icons: {
-    icon: [
-      {
-        url: "/unity.svg",
-        href: "/unity.svg",
-      },
-    ],
+    icon: "/unity.svg",
   },
 };
 
