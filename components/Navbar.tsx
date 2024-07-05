@@ -3,6 +3,7 @@ import Link from "next/link";
 import React from "react";
 import MobileNav from "./MobileNav";
 import { ClerkProvider, SignedIn, UserButton } from "@clerk/nextjs";
+import { Button } from "./ui/button";
 
 const Navbar = () => {
   return (
@@ -24,6 +25,11 @@ const Navbar = () => {
           <UserButton />
         </SignedIn>
         <MobileNav />
+        <Link href="/about">
+          <Button variant="outline" className="text-white">
+            Developers
+          </Button>
+        </Link>
       </div>
     </nav>
   );
