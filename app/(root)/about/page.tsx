@@ -50,7 +50,7 @@ const teamMembers = [
     image: "/images/haroon.jpg",
     socialLinks: {
       github: "https://github.com/HaroonAzizi",
-      twitter: "https://twitter.com/haroonazizi",
+      twitter: "https://twitter.com/az_haroon",
       linkedin: "https://linkedin.com/in/haroonazizi",
     },
     email: "haroonazizi15@gmail.com",
@@ -69,10 +69,10 @@ const teamMembers = [
     image: "/images/anas.jpg",
     socialLinks: {
       github: "https://github.com/kabir-sahib",
-      twitter: "https://twitter.com/anaskabir",
+      twitter: "https://twitter.com/kabir_sahib7676",
       linkedin: "https://linkedin.com/in/anaskabir",
     },
-    email: "anaskabir14@gmail.com",
+    email: "anaskabir7676@gmail.com",
     phone: "+93 780 30 31 30",
     location: "Kabul, Afghanistan",
     bio: "Creative designer with a passion for crafting beautiful and functional user experiences. Specializes in UI/UX design.",
@@ -157,10 +157,10 @@ const AboutUs = () => {
       >
         <motion.h1
           variants={itemVariants}
-          className="text-7xl font-extrabold mb-8 bg-clip-text text-transparent text-blue-700"
+          className="text-7xl text-blue-700 font-extrabold mb-8 bg-clip-text text-transparent "
           style={{ textShadow: "2px 2px 4px rgba(0,0,0,0.3)" }}
         >
-          Meet Our Exceptional Team
+          <div className="text-blue-600">Meet Our Exceptional Team</div>
         </motion.h1>
         <motion.p
           variants={itemVariants}
