@@ -26,7 +26,7 @@ const teamMembers = [
     socialLinks: {
       github: "https://github.com/ElhamDevelopmentStudio",
       twitter: "https://twitter.com/Elhamullah2",
-      linkedin: "https://linkedin.com/in/elhamullah",
+      linkedin: "https://www.linkedin.com/in/elhamullah-hossaini-408287264",
     },
     email: "elhamullah.hossaini@gmail.com",
     phone: "+93 711 55 61 45",
