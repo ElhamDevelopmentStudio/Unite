@@ -32,7 +32,7 @@ const EndCallButton = () => {
     toast({
       variant: "destructive",
       title: "Meeting Terminated.",
-      description: "You ended the meeting",
+      description: "You ended the Meeting",
     });
   };
 
